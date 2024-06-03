@@ -1,11 +1,13 @@
-﻿using API.Models;
+﻿using API.DTOs;
+using API.Models;
 
 namespace API.Interfaces;
 
 public interface ICategoriaRepository
 {
-    public Task<IEnumerable<Categoria>> GetAllAsync();
-    public Task<Categoria?> GetByIdAsync(int id);
-    public Task<Categoria?> UpdateAsync(Categoria categoria);
-    public Task<Categoria?> DeleteByIdAsync(int id);
+    public Task<IEnumerable<CategoriaViewModel>> GetAllAsync();
+    public Task<CategoriaViewModel?> GetByIdAsync(int id);
+    public Task<CategoriaViewModel> CreateAsync(CategoriaInputModel categoria);
+    public Task<CategoriaViewModel?> UpdateAsync(int id, CategoriaInputModel categoria);
+    public Task<CategoriaViewModel?> DeleteByIdAsync(int id);
 }

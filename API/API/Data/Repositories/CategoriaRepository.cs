@@ -1,4 +1,5 @@
-﻿using API.Interfaces;
+﻿using API.DTOs;
+using API.Interfaces;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
 using SQLitePCL;
@@ -15,35 +16,63 @@ public class CategoriaRepository : ICategoriaRepository
         _categorias = _context.Categorias;
     }
 
-    public async Task<IEnumerable<Categoria>> GetAllAsync()
+    public async Task<IEnumerable<CategoriaViewModel>> GetAllAsync()
     {
-        return await _categorias.ToListAsync();
+        return await _categorias
+            .AsNoTracking()
+            .Select(c => MapToViewModel(c))
+            .ToListAsync();
     }
 
-    public async Task<Categoria?> GetByIdAsync(int id)
+    public async Task<CategoriaViewModel?> GetByIdAsync(int id)
     {
-        return await _categorias.FindAsync(id);
+        var categoria = await _categorias.FindAsync(id);
+        if (categoria is null) return null;
+        return MapToViewModel(categoria);
     }
 
-    public async Task<Categoria?> UpdateAsync(Categoria categoria)
+    public async Task<CategoriaViewModel> CreateAsync(CategoriaInputModel categoria)
     {
-        var categoriaDB = await _categorias.FindAsync(categoria.Id);
+        var categoriaParaAdicionar = new Categoria
+        {
+            Nome = categoria.Nome,
+            Descricao = categoria.Descricao
+        };
+        await _categorias.AddAsync(categoriaParaAdicionar);
+        await _context.SaveChangesAsync();
+        return MapToViewModel(categoriaParaAdicionar);
+    }
+
+    public async Task<CategoriaViewModel?> UpdateAsync(int id, CategoriaInputModel categoria)
+    {
+        var categoriaDB = await _categorias.FindAsync(id);
         if (categoriaDB is null) return null;
+
+        categoriaDB.Nome = categoria.Nome;
+        categoriaDB.Descricao = categoria.Descricao;
 
         _context.Entry(categoria).State =
             Microsoft.EntityFrameworkCore.EntityState.Modified;
         await _context.SaveChangesAsync();
-        return categoria;
-
+        return MapToViewModel(categoriaDB);
     }
 
-    public async Task<Categoria?> DeleteByIdAsync(int id)
+    public async Task<CategoriaViewModel?> DeleteByIdAsync(int id)
     {
         var categoria = await _categorias.FindAsync(id);
         if (categoria is null) return null;
         _categorias.Remove(categoria);
         await _context.SaveChangesAsync();
-        return categoria;
+        return MapToViewModel(categoria);
+    }
 
+    private CategoriaViewModel MapToViewModel(Categoria categoria)
+    {
+        return new CategoriaViewModel
+        {
+            Id = categoria.Id,
+            Nome = categoria.Nome,
+            Descricao = categoria.Descricao
+        };
     }
 }

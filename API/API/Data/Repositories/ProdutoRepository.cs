@@ -1,4 +1,5 @@
-﻿using API.Interfaces;
+﻿using API.DTOs;
+using API.Interfaces;
 using API.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,35 +14,74 @@ public class ProdutoRepository : IProdutoRepository
         _context = context;
         _produtos = context.Produtos;
     }
-    public async Task<IEnumerable<Produto>> GetAllAsync()
+    public async Task<IEnumerable<ProdutoViewModel>> GetAllAsync()
     {
-        return await _produtos.Take(10).ToListAsync();
+        return await _produtos
+            .AsNoTracking()
+            .Take(15)
+            .Select(p => MapToViewModel(p))
+            .ToListAsync();
     }
 
-    public async Task<Produto?> GetByIdAsync(int id)
+    public async Task<ProdutoViewModel?> GetByIdAsync(int id)
     {
-        return await _produtos.FindAsync(id);
+        var produto = await _produtos.FindAsync(id);
+        if (produto is null) return null;
+        return MapToViewModel(produto);
     }
 
-    public async Task<Produto?> UpdateAsync(Produto produto)
+    public async Task<ProdutoViewModel> CreateAsync(ProdutoInputModel produto)
     {
-        var produtoDB = await _produtos.FindAsync(produto.Id);
+        var produtoParaAdicionar = new Produto
+        {
+            Nome = produto.Nome,
+            Descricao = produto.Descricao,
+            Estoque = produto.Estoque,
+            CategoriaId = produto.CategoriaId,
+        };
+        await _produtos.AddAsync(produtoParaAdicionar);
+        return MapToViewModel(produtoParaAdicionar);
+    }
+
+    public async Task<ProdutoViewModel?> UpdateAsync(int id, ProdutoInputModel produto)
+    {
+        var produtoDB = await _produtos.FindAsync(id);
         if (produtoDB is null) return null;
 
-        _context.Entry(produto).State =
+        produtoDB.Descricao = produto.Descricao;
+        produtoDB.CategoriaId = produto.CategoriaId;
+        produtoDB.Nome = produto.Nome;
+
+        _context.Entry(produtoDB).State =
             Microsoft.EntityFrameworkCore.EntityState.Modified;
         await _context.SaveChangesAsync();
-        return produto;
+        return MapToViewModel(produtoDB);
 
     }
 
-    public async Task<Produto?> DeleteByIdAsync(int id)
+    public async Task<ProdutoViewModel?> DeleteByIdAsync(int id)
     {
         var produto = await _produtos.FindAsync(id);
         if (produto is null) return null;
         _produtos.Remove(produto);
         await _context.SaveChangesAsync();
-        return produto;
+        return MapToViewModel(produto);
+    }
 
+    public ProdutoViewModel MapToViewModel(Produto produto)
+    {
+        return new ProdutoViewModel
+        {
+            Id = produto.Id,
+            Nome = produto.Nome,
+            Descricao = produto.Descricao,
+            Estoque = produto.Estoque,
+            Categoria = new CategoriaViewModel
+            {
+                Descricao = produto.Categoria.Descricao,
+                Id = produto.Categoria.Id,
+                Nome = produto.Categoria.Nome
+            }
+        };
     }
 }

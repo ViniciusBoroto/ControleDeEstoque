@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240603173333_CriacaoInicial")]
+    [Migration("20240603204526_CriacaoInicial")]
     partial class CriacaoInicial
     {
         /// <inheritdoc />
@@ -50,6 +50,9 @@ namespace API.Data.Migrations
                     b.Property<string>("Descricao")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Estoque")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Nome")
                         .IsRequired()
