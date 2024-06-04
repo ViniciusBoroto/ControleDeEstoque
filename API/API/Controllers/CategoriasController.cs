@@ -39,6 +39,12 @@ public class CategoriasController : ControllerBase
         return Ok(resp);
     }
 
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<CategoriaViewModel>> Delete(int id)
+    {
+        return Ok(await _repo.DeleteByIdAsync(id));
+    }
+
     [HttpGet("{id:int}/produtos")]
     public async Task<ActionResult<IEnumerable<ProdutoViewModel>>> GetByCategoriaAsync(int id)
     {
