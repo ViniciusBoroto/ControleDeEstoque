@@ -16,13 +16,13 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Produto>>> GetAll()
+    public async Task<ActionResult<IEnumerable<Produto>>> GetAllAsync()
     {
         return Ok(await _repo.GetAllAsync());
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<Produto>> GetById(int id)
+    public async Task<ActionResult<Produto>> GetByIdAsync(int id)
     {
         var produto = await _repo.GetByIdAsync(id);
         if (produto is null) return NotFound();
@@ -30,8 +30,8 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpPost("")]
-    public async Task<ActionResult<ProdutoViewModel>> Create(ProdutoInputModel produto)
+    public async Task<ActionResult<ProdutoViewModel>> CreateAsync(ProdutoInputModel produto)
     {
-        return Ok(_repo.CreateAsync(produto));
+        return Ok(await _repo.CreateAsync(produto));
     }
 }

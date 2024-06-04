@@ -18,6 +18,7 @@ public class ProdutoRepository : IProdutoRepository
     {
         return await _produtos
             .AsNoTracking()
+            .Include(p => p.Categoria)
             .Take(15)
             .Select(p => MapToViewModel(p))
             .ToListAsync();
@@ -25,7 +26,7 @@ public class ProdutoRepository : IProdutoRepository
 
     public async Task<ProdutoViewModel?> GetByIdAsync(int id)
     {
-        var produto = await _produtos.FindAsync(id);
+        var produto = await _produtos.Include(p => p.Categoria).FirstOrDefaultAsync(p => p.Id == id);
         if (produto is null) return null;
         return MapToViewModel(produto);
     }
@@ -38,14 +39,16 @@ public class ProdutoRepository : IProdutoRepository
             Descricao = produto.Descricao,
             Estoque = produto.Estoque,
             CategoriaId = produto.CategoriaId,
+            Categoria = await _context.Categorias.FindAsync(produto.CategoriaId)
         };
         await _produtos.AddAsync(produtoParaAdicionar);
+        await _context.SaveChangesAsync();
         return MapToViewModel(produtoParaAdicionar);
     }
 
     public async Task<ProdutoViewModel?> UpdateAsync(int id, ProdutoInputModel produto)
     {
-        var produtoDB = await _produtos.FindAsync(id);
+        var produtoDB = await _produtos.Include(p => p.Categoria).FirstOrDefaultAsync(p => p.Id == id);
         if (produtoDB is null) return null;
 
         produtoDB.Descricao = produto.Descricao;
@@ -61,27 +64,23 @@ public class ProdutoRepository : IProdutoRepository
 
     public async Task<ProdutoViewModel?> DeleteByIdAsync(int id)
     {
-        var produto = await _produtos.FindAsync(id);
+        var produto = await _produtos.Include(p => p.Categoria).FirstOrDefaultAsync(p => p.Id == id);
         if (produto is null) return null;
         _produtos.Remove(produto);
         await _context.SaveChangesAsync();
         return MapToViewModel(produto);
     }
 
-    public ProdutoViewModel MapToViewModel(Produto produto)
+    private static ProdutoViewModel MapToViewModel(Produto p)
     {
-        return new ProdutoViewModel
+        return new ProdutoViewModel()
         {
-            Id = produto.Id,
-            Nome = produto.Nome,
-            Descricao = produto.Descricao,
-            Estoque = produto.Estoque,
-            Categoria = new CategoriaViewModel
-            {
-                Descricao = produto.Categoria.Descricao,
-                Id = produto.Categoria.Id,
-                Nome = produto.Categoria.Nome
-            }
+            Id = p.Id,
+            Nome = p.Nome,
+            Descricao = p.Descricao,
+            Estoque = p.Estoque,
+            CategoriaId = p.CategoriaId
         };
     }
+
 }

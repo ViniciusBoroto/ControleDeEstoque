@@ -20,7 +20,7 @@ public class CategoriaRepository : ICategoriaRepository
     {
         return await _categorias
             .AsNoTracking()
-            .Select(c => MapToViewModel(c))
+            .Select(c => new CategoriaViewModel(c))
             .ToListAsync();
     }
 
@@ -28,7 +28,23 @@ public class CategoriaRepository : ICategoriaRepository
     {
         var categoria = await _categorias.FindAsync(id);
         if (categoria is null) return null;
-        return MapToViewModel(categoria);
+        return new CategoriaViewModel((categoria));
+    }
+
+    public async Task<IEnumerable<ProdutoViewModel>> GetByCategoriaAsync(int categoriaId)
+    {
+        return await _context.Produtos
+            .Where(p => p.CategoriaId == categoriaId)
+            .Select(p => new ProdutoViewModel()
+            {
+                Id = p.Id,
+                CategoriaId = p.CategoriaId,
+                Nome = p.Nome,
+                Descricao = p.Descricao,
+                Estoque = p.Estoque
+            })
+            .ToListAsync();
+        
     }
 
     public async Task<CategoriaViewModel> CreateAsync(CategoriaInputModel categoria)
@@ -40,7 +56,7 @@ public class CategoriaRepository : ICategoriaRepository
         };
         await _categorias.AddAsync(categoriaParaAdicionar);
         await _context.SaveChangesAsync();
-        return MapToViewModel(categoriaParaAdicionar);
+        return new CategoriaViewModel(categoriaParaAdicionar);
     }
 
     public async Task<CategoriaViewModel?> UpdateAsync(int id, CategoriaInputModel categoria)
@@ -54,7 +70,7 @@ public class CategoriaRepository : ICategoriaRepository
         _context.Entry(categoria).State =
             Microsoft.EntityFrameworkCore.EntityState.Modified;
         await _context.SaveChangesAsync();
-        return MapToViewModel(categoriaDB);
+        return new CategoriaViewModel(categoriaDB);
     }
 
     public async Task<CategoriaViewModel?> DeleteByIdAsync(int id)
@@ -63,16 +79,8 @@ public class CategoriaRepository : ICategoriaRepository
         if (categoria is null) return null;
         _categorias.Remove(categoria);
         await _context.SaveChangesAsync();
-        return MapToViewModel(categoria);
+        return new CategoriaViewModel(categoria);
     }
 
-    private CategoriaViewModel MapToViewModel(Categoria categoria)
-    {
-        return new CategoriaViewModel
-        {
-            Id = categoria.Id,
-            Nome = categoria.Nome,
-            Descricao = categoria.Descricao
-        };
-    }
+
 }

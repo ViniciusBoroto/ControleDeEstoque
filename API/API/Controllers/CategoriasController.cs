@@ -14,6 +14,13 @@ public class CategoriasController : ControllerBase
         _repo = repo;
     }
 
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<CategoriaViewModel>>> GetAllAsync()
+    {
+        return Ok(await _repo.GetAllAsync());
+    }
+
+
     [HttpGet("{id:int}")]
     public async Task<ActionResult<CategoriaViewModel>> GetById(int id)
     {
@@ -30,5 +37,11 @@ public class CategoriasController : ControllerBase
         var resp = await _repo.CreateAsync(categoria);
         if (resp is null) return BadRequest();
         return Ok(resp);
+    }
+
+    [HttpGet("{id:int}/produtos")]
+    public async Task<ActionResult<IEnumerable<ProdutoViewModel>>> GetByCategoriaAsync(int id)
+    {
+        return Ok(await _repo.GetByCategoriaAsync(id));
     }
 }
