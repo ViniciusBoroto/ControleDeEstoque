@@ -34,4 +34,10 @@ public class ProdutosController : ControllerBase
     {
         return Ok(await _repo.CreateAsync(produto));
     }
+
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult<ProdutoViewModel>> DeleteAsync(int id)
+    {
+        return Ok( await _repo.DeleteByIdAsync(id));
+    }
 }

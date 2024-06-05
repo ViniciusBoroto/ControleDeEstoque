@@ -44,8 +44,8 @@
                 <v-btn
                   density="comfortable"
                   icon="mdi-delete"
-                  color="error"
-                  variant="tonal"
+                  color="red"
+                  @click="openDeleteDialog(produto.id)"
                 ></v-btn>
               </td>
             </tr>
@@ -53,6 +53,29 @@
         </v-table>
       </v-card-text>
     </v-card>
+
+    <!-- Diálogo para confirmação do botão de excluir -->
+    <v-dialog
+      v-if="deleteDialog == true"
+      v-model="deleteDialog"
+      max-width="500px"
+    >
+      <v-card>
+        <v-card-title class="headline">Confirme se quer excluir</v-card-title>
+        <v-card-text
+          >Você tem certeza de que deseja excluir esse produto?</v-card-text
+        >
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="deleteDialog = false"
+            >Cancelar</v-btn
+          >
+          <v-btn color="red darken-1" text @click="deleteProduto"
+            >Excluir</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -64,6 +87,8 @@ import axios from "axios";
 const categorias = ref([]);
 const produtos = ref([]);
 const categoriaSelecionada = ref(null);
+const deleteDialog = ref(false);
+const produtoIdToDelete = ref(null);
 
 // Fetch categories from API when the component is mounted
 const fetchCategorias = async () => {
@@ -89,6 +114,29 @@ const fetchProdutos = async (categoriaId) => {
     produtos.value = response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
+  }
+};
+
+// Confirm Delete Dialog
+const openDeleteDialog = (produtoId) => {
+  produtoIdToDelete.value = produtoId;
+  deleteDialog.value = true;
+};
+
+// Delete product
+const deleteProduto = async () => {
+  try {
+    await axios.delete(
+      `https://localhost:7118/api/produtos/${produtoIdToDelete.value}`
+    );
+    // Remove deleted product from the products array
+    deleteDialog.value = false;
+    fetchCategorias();
+    produtos.value = products.value.filter(
+      (product) => product.id !== produtoIdToDelete.value
+    );
+  } catch (error) {
+    console.error("Error deleting product:", error);
   }
 };
 
