@@ -2,47 +2,29 @@
   <v-container>
     <v-card>
       <v-card-title>Categorias</v-card-title>
-      <v-card-text>
-        <v-tabs
-          v-model="categoriaSelecionada"
-          class="rounded"
-          bg-color="grey-lighten-4"
-          center-active
-          grow
-        >
-          <v-tab
-            v-for="categoria in categorias"
-            :key="categoria.id"
-            :value="categoria.id"
-            @click="fetchProdutos(categoria.id)"
-          >
-            {{ categoria.nome }}
-          </v-tab>
-        </v-tabs>
-        <v-btn
+      <v-card-text
+        ><v-btn
           class="my-3"
           rounded="xs"
           size="large"
           color="green"
           variant="flat"
-          @click="() => (creationForm = true)"
+          to="/categorias/criar"
           block
-          >Adicionar produto</v-btn
+          >Adicionar categoria</v-btn
         >
         <v-table>
           <thead>
             <tr class="font-weight-bold">
               <th class="text-left font-weight-bold">Nome</th>
               <th class="text-left font-weight-bold">Descrição</th>
-              <th class="text-left font-weight-bold">Estoque</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="produto in produtos" :key="produto.id">
-              <td>{{ produto.nome }}</td>
-              <td>{{ produto.descricao }}</td>
-              <td>{{ produto.estoque }}</td>
+            <tr v-for="categoria in categorias" :key="categoria.id">
+              <td>{{ categoria.nome }}</td>
+              <td>{{ categoria.descricao }}</td>
               <td class="text-center">
                 <v-btn
                   class="mr-3"
@@ -54,7 +36,7 @@
                   density="comfortable"
                   icon="mdi-delete"
                   color="red"
-                  @click="openDeleteDialog(produto.id)"
+                  @click="openDeleteDialog(categoria.id)"
                 ></v-btn>
               </td>
             </tr>
@@ -64,15 +46,11 @@
     </v-card>
 
     <!-- Diálogo para confirmação do botão de excluir -->
-    <v-dialog
-      v-if="deleteDialog == true"
-      v-model="deleteDialog"
-      max-width="500px"
-    >
+    <v-dialog v-model="deleteDialog" max-width="500px">
       <v-card>
         <v-card-title class="headline">Confirme se quer excluir</v-card-title>
         <v-card-text
-          >Você tem certeza de que deseja excluir esse produto?</v-card-text
+          >Você tem certeza de que deseja excluir essa categoria?</v-card-text
         >
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -83,17 +61,12 @@
             color="red darken-1"
             variant="outlined"
             text
-            @click="deleteProduto"
+            @click="deleteCategoria"
             >Excluir</v-btn
           >
         </v-card-actions>
       </v-card>
     </v-dialog>
-
-    <product-form
-      :categoria="categoriaSelecionada"
-      v-if="creationForm"
-    ></product-form>
   </v-container>
 </template>
 
@@ -103,50 +76,30 @@ import axios from "axios";
 
 // Reactive data
 const categorias = ref([]);
-const produtos = ref([]);
-const categoriaSelecionada = ref(null);
 const deleteDialog = ref(false);
-const creationForm = ref(false);
-const produtoIdToDelete = ref(null);
+const categoriaIdToDelete = ref(null);
 
 // Fetch categories from API when the component is mounted
 const fetchCategorias = async () => {
   try {
     const response = await axios.get("https://localhost:7118/api/Categorias");
     categorias.value = response.data;
-    // Set the first category as selected by default
-    if (categorias.value.length > 0) {
-      categoriaSelecionada.value = categorias.value[0].id;
-      fetchProdutos(categorias.value[0].id);
-    }
   } catch (error) {
-    console.error("Error fetching categories:", error);
-  }
-};
-
-// Fetch products for a specific category
-const fetchProdutos = async (categoriaId) => {
-  try {
-    const response = await axios.get(
-      `https://localhost:7118/api/Categorias/${categoriaId}/produtos`
-    );
-    produtos.value = response.data;
-  } catch (error) {
-    console.error("Error fetching products:", error);
+    console.error("Ocorreu um erro ao buscar as categorias", error);
   }
 };
 
 // Confirm Delete Dialog
-const openDeleteDialog = (produtoId) => {
-  produtoIdToDelete.value = produtoId;
+const openDeleteDialog = (categoriaId) => {
+  categoriaIdToDelete.value = categoriaId;
   deleteDialog.value = true;
 };
 
 // Delete product
-const deleteProduto = async () => {
+const deleteCategoria = async () => {
   try {
     await axios.delete(
-      `https://localhost:7118/api/produtos/${produtoIdToDelete.value}`
+      `https://localhost:7118/api/Categorias/${categoriaIdToDelete.value}`
     );
     // Remove deleted product from the products array
     deleteDialog.value = false;

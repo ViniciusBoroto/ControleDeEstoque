@@ -22,7 +22,7 @@ public class CategoriasController : ControllerBase
 
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<CategoriaViewModel>> GetById(int id)
+    public async Task<ActionResult<CategoriaViewModel>> GetByIdAsync(int id)
     {
         var categoria = await _repo.GetByIdAsync(id);
         if (categoria is null)
@@ -32,15 +32,23 @@ public class CategoriasController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<CategoriaViewModel>> Create(CategoriaInputModel categoria)
+    public async Task<ActionResult<CategoriaViewModel>> CreateAsync(CategoriaInputModel categoria)
     {
         var resp = await _repo.CreateAsync(categoria);
         if (resp is null) return BadRequest();
         return Ok(resp);
     }
 
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<CategoriaViewModel>> UpdateAsync(int id, CategoriaInputModel categoria)
+    {
+        var response = await _repo.UpdateAsync(id, categoria);
+        if (response is null) return NotFound();
+        return Ok(response);
+    }
+
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult<CategoriaViewModel>> Delete(int id)
+    public async Task<ActionResult<CategoriaViewModel>> DeleteAsync(int id)
     {
         return Ok(await _repo.DeleteByIdAsync(id));
     }

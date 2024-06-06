@@ -35,6 +35,14 @@ public class ProdutosController : ControllerBase
         return Ok(await _repo.CreateAsync(produto));
     }
 
+    [HttpPut("{id:int}")]
+    public async Task<ActionResult<ProdutoViewModel>> UpdateAsync(int id, ProdutoInputModel produto)
+    {
+        var response = await _repo.UpdateAsync(id, produto);
+        if (response is null) return NotFound();
+        return Ok(response);
+    }
+
     [HttpDelete("{id:int}")]
     public async Task<ActionResult<ProdutoViewModel>> DeleteAsync(int id)
     {
