@@ -68,10 +68,8 @@ const loadingcategorias = ref(false);
 const successMessage = ref("");
 const isEditMode = ref(false);
 
-// Router instance
 const router = useRouter();
 
-// Fetch categorias from API
 const fetchCategorias = async () => {
   loadingcategorias.value = true;
   try {
@@ -84,21 +82,17 @@ const fetchCategorias = async () => {
   }
 };
 
-// Handle form submission
 const handleSubmit = async () => {
   try {
     if (isEditMode.value) {
-      // Update product
       await axios.put(
         `https://api.example.com/products/${formData.value.id}`,
         formData.value
       );
       successMessage.value = "Product updated successfully!";
     } else {
-      // Create product
       await axios.post("https://api.example.com/products", formData.value);
       successMessage.value = "Product created successfully!";
-      // Reset form data
       formData.value = {
         nome: "",
         descricao: "",
@@ -111,37 +105,5 @@ const handleSubmit = async () => {
   }
 };
 
-// Fetch categorias on mount
 onMounted(fetchCategorias);
-
-// Watch for route params to determine edit mode and load product data if editing
-// watch(
-//   () => router.currentRoute.value.params.id,
-//   async (newId) => {
-//     if (newId) {
-//       isEditMode.value = true;
-//       try {
-//         const response = await axios.get(
-//           `https://api.example.com/products/${newId}`
-//         );
-//         formData.value = response.data;
-//       } catch (error) {
-//         console.error("Error fetching product data:", error);
-//       }
-//     } else {
-//       isEditMode.value = false;
-//       formData.value = {
-//         name: "",
-//         description: "",
-//         inventory: 0,
-//         category: "",
-//       };
-//     }
-//   },
-//   { immediate: true }
-// );
 </script>
-
-<style scoped>
-/* Add custom styles if needed */
-</style>

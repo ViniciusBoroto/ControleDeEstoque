@@ -20,6 +20,7 @@
           </v-tab>
         </v-tabs>
         <v-btn
+          to="/criar"
           class="my-3"
           rounded="xs"
           size="large"
@@ -101,7 +102,6 @@
 import { ref, onMounted } from "vue";
 import axios from "axios";
 
-// Reactive data
 const categorias = ref([]);
 const produtos = ref([]);
 const categoriaSelecionada = ref(null);
@@ -109,12 +109,10 @@ const deleteDialog = ref(false);
 const creationForm = ref(false);
 const produtoIdToDelete = ref(null);
 
-// Fetch categories from API when the component is mounted
 const fetchCategorias = async () => {
   try {
     const response = await axios.get("https://localhost:7118/api/Categorias");
     categorias.value = response.data;
-    // Set the first category as selected by default
     if (categorias.value.length > 0) {
       categoriaSelecionada.value = categorias.value[0].id;
       fetchProdutos(categorias.value[0].id);
@@ -124,7 +122,6 @@ const fetchCategorias = async () => {
   }
 };
 
-// Fetch products for a specific category
 const fetchProdutos = async (categoriaId) => {
   try {
     const response = await axios.get(
@@ -136,19 +133,16 @@ const fetchProdutos = async (categoriaId) => {
   }
 };
 
-// Confirm Delete Dialog
 const openDeleteDialog = (produtoId) => {
   produtoIdToDelete.value = produtoId;
   deleteDialog.value = true;
 };
 
-// Delete product
 const deleteProduto = async () => {
   try {
     await axios.delete(
       `https://localhost:7118/api/produtos/${produtoIdToDelete.value}`
     );
-    // Remove deleted product from the products array
     deleteDialog.value = false;
     fetchCategorias();
     produtos.value = products.value.filter(
@@ -162,6 +156,4 @@ const deleteProduto = async () => {
 onMounted(fetchCategorias);
 </script>
 
-<style scoped>
-/* Add custom styles if needed */
-</style>
+<style scoped></style>
