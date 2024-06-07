@@ -27,6 +27,7 @@
               <td>{{ categoria.descricao }}</td>
               <td class="text-center">
                 <v-btn
+                  @click="redirectToEdit(categoria.id)"
                   class="mr-3"
                   density="comfortable"
                   icon="mdi-pencil"
@@ -73,13 +74,17 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
+import { useRouter } from "vue-router";
 
-// Reactive data
 const categorias = ref([]);
 const deleteDialog = ref(false);
 const categoriaIdToDelete = ref(null);
+const router = useRouter();
 
-// Fetch categories from API when the component is mounted
+const redirectToEdit = (cId) => {
+  router.push({ name: "EditarCategoria", params: { id: cId } });
+};
+
 const fetchCategorias = async () => {
   try {
     const response = await axios.get("https://localhost:7118/api/Categorias");
@@ -89,19 +94,16 @@ const fetchCategorias = async () => {
   }
 };
 
-// Confirm Delete Dialog
 const openDeleteDialog = (categoriaId) => {
   categoriaIdToDelete.value = categoriaId;
   deleteDialog.value = true;
 };
 
-// Delete product
 const deleteCategoria = async () => {
   try {
     await axios.delete(
       `https://localhost:7118/api/Categorias/${categoriaIdToDelete.value}`
     );
-    // Remove deleted product from the products array
     deleteDialog.value = false;
     fetchCategorias();
     produtos.value = products.value.filter(
@@ -114,7 +116,3 @@ const deleteCategoria = async () => {
 
 onMounted(fetchCategorias);
 </script>
-
-<style scoped>
-/* Add custom styles if needed */
-</style>
