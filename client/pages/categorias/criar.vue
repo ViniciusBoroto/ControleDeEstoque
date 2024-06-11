@@ -57,7 +57,7 @@ const successMessage = ref("");
 const handleSubmit = async () => {
   try {
     const response = await axios.post(
-      "https://localhost:7118/api/Categorias",
+      "https://localhost:7118/api/categorias",
       formData.value
     );
     successMessage.value = "Categoria criada com sucesso!";

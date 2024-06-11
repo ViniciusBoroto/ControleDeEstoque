@@ -16,6 +16,7 @@
         <v-table>
           <thead>
             <tr class="font-weight-bold">
+              <th class="text-left font-weight-bold">ID</th>
               <th class="text-left font-weight-bold">Nome</th>
               <th class="text-left font-weight-bold">Descrição</th>
               <th></th>
@@ -23,6 +24,7 @@
           </thead>
           <tbody>
             <tr v-for="categoria in categorias" :key="categoria.id">
+              <td>{{ categoria.id }}</td>
               <td>{{ categoria.nome }}</td>
               <td>{{ categoria.descricao }}</td>
               <td class="text-center">
@@ -94,7 +96,7 @@ const redirectToEdit = (cId) => {
 const fetchCategorias = async () => {
   try {
     loading.value = true;
-    const response = await axios.get("https://localhost:7118/api/Categorias");
+    const response = await axios.get("https://localhost:7118/api/categorias");
     categorias.value = response.data;
   } catch (error) {
     console.error("Ocorreu um erro ao buscar as categorias", error);
@@ -111,7 +113,7 @@ const openDeleteDialog = (categoriaId) => {
 const deleteCategoria = async () => {
   try {
     await axios.delete(
-      `https://localhost:7118/api/Categorias/${categoriaIdToDelete.value}`
+      `https://localhost:7118/api/categorias/${categoriaIdToDelete.value}`
     );
     deleteDialog.value = false;
     fetchCategorias();

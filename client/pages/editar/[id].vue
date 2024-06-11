@@ -76,8 +76,8 @@ const successMessage = ref("");
 
 const handleSubmit = async () => {
   try {
-    const response = await axios.post(
-      "https://localhost:7118/api/produtos",
+    const response = await axios.put(
+      `https://localhost:7118/api/produtos/${id}`,
       formData.value
     );
     successMessage.value = "Produto criado com sucesso!";

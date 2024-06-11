@@ -53,6 +53,7 @@ public class ProdutoRepository : IProdutoRepository
 
         produtoDB.Descricao = produto.Descricao;
         produtoDB.CategoriaId = produto.CategoriaId;
+        produtoDB.Estoque = produto.Estoque;
         produtoDB.Nome = produto.Nome;
 
         _context.Entry(produtoDB).State =

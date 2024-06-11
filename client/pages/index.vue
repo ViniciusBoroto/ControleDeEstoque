@@ -38,6 +38,7 @@
         <v-table>
           <thead>
             <tr class="font-weight-bold">
+              <th class="text-left font-weight-bold">ID</th>
               <th class="text-left font-weight-bold">Nome</th>
               <th class="text-left font-weight-bold">Descrição</th>
               <th class="text-left font-weight-bold">Estoque</th>
@@ -46,6 +47,7 @@
           </thead>
           <tbody>
             <tr v-for="produto in produtos" :key="produto.id">
+              <td>{{ produto.id }}</td>
               <td>{{ produto.nome }}</td>
               <td>{{ produto.descricao }}</td>
               <td>{{ produto.estoque }}</td>
@@ -117,7 +119,7 @@ const loading = ref(true);
 
 const fetchCategorias = async () => {
   try {
-    const response = await axios.get("https://localhost:7118/api/Categorias");
+    const response = await axios.get("https://localhost:7118/api/categorias");
     categorias.value = response.data;
     if (categorias.value.length > 0) {
       categoriaSelecionada.value = categorias.value[0].id;
@@ -132,7 +134,7 @@ const fetchProdutos = async (categoriaId) => {
   try {
     loading.value = true;
     const response = await axios.get(
-      `https://localhost:7118/api/Categorias/${categoriaId}/produtos`
+      `https://localhost:7118/api/categorias/${categoriaId}/produtos`
     );
     produtos.value = response.data;
   } catch (error) {
