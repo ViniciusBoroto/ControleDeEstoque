@@ -43,6 +43,11 @@
             </tr>
           </tbody>
         </v-table>
+        <v-progress-linear
+          :active="loading"
+          color="green"
+          indeterminate
+        ></v-progress-linear>
       </v-card-text>
     </v-card>
 
@@ -80,6 +85,7 @@ const categorias = ref([]);
 const deleteDialog = ref(false);
 const categoriaIdToDelete = ref(null);
 const router = useRouter();
+const loading = ref(true);
 
 const redirectToEdit = (cId) => {
   router.push({ name: "EditarCategoria", params: { id: cId } });
@@ -87,10 +93,13 @@ const redirectToEdit = (cId) => {
 
 const fetchCategorias = async () => {
   try {
+    loading.value = true;
     const response = await axios.get("https://localhost:7118/api/Categorias");
     categorias.value = response.data;
   } catch (error) {
     console.error("Ocorreu um erro ao buscar as categorias", error);
+  } finally {
+    loading.value = false;
   }
 };
 

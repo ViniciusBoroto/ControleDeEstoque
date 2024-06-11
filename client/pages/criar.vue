@@ -14,7 +14,7 @@
       Voltar
     </v-btn>
     <v-card>
-      <v-card-title>Criar categoria</v-card-title>
+      <v-card-title>Criar produto</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="handleSubmit">
           <v-text-field

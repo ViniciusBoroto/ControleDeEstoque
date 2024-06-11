@@ -30,6 +30,11 @@
           block
           >Adicionar produto</v-btn
         >
+        <v-progress-linear
+          :active="loading"
+          color="green"
+          indeterminate
+        ></v-progress-linear>
         <v-table>
           <thead>
             <tr class="font-weight-bold">
@@ -108,6 +113,7 @@ const categoriaSelecionada = ref(null);
 const deleteDialog = ref(false);
 const creationForm = ref(false);
 const produtoIdToDelete = ref(null);
+const loading = ref(true);
 
 const fetchCategorias = async () => {
   try {
@@ -124,12 +130,15 @@ const fetchCategorias = async () => {
 
 const fetchProdutos = async (categoriaId) => {
   try {
+    loading.value = true;
     const response = await axios.get(
       `https://localhost:7118/api/Categorias/${categoriaId}/produtos`
     );
     produtos.value = response.data;
   } catch (error) {
     console.error("Error fetching products:", error);
+  } finally {
+    loading.value = false;
   }
 };
 
