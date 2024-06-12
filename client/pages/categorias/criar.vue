@@ -52,6 +52,8 @@ const formData = ref({
   descricao: "",
 });
 
+const { id } = useRoute().params;
+
 const successMessage = ref("");
 
 const handleSubmit = async () => {

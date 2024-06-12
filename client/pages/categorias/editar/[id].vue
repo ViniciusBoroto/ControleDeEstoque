@@ -48,7 +48,6 @@
 <script setup>
 import { ref } from "vue";
 import axios from "axios";
-import { useRouter } from "vue-router";
 
 const loadingCategoria = ref(true);
 const categoria = ref({
@@ -75,13 +74,13 @@ const fetchCategoria = async () => {
 const handleSubmit = async () => {
   try {
     const response = await axios.put(
-      `https://localhost:7118/api/Categorias/${id}`,
-      formData.value
+      `https://localhost:7118/api/categorias/${id}`,
+      categoria.value
     );
     successMessage.value = "Categoria editada com sucesso!";
-    formData.value = { nome: "", descricao: "" };
+    categoria.value = { nome: "", descricao: "" };
   } catch (error) {
-    console.error("Erro durante a criação da categoria", error);
+    window.alert(`Erro durante a criação da categoria, erro ${error}`);
   }
 };
 fetchCategoria();

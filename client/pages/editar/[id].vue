@@ -14,7 +14,7 @@
       Voltar
     </v-btn>
     <v-card>
-      <v-card-title>Criar produto</v-card-title>
+      <v-card-title>Editar produto</v-card-title>
       <v-card-text>
         <v-form @submit.prevent="handleSubmit">
           <v-text-field
@@ -44,7 +44,7 @@
             variant="solo"
             required
           ></v-select>
-          <v-btn type="submit" color="primary" size="large">Criar</v-btn>
+          <v-btn type="submit" color="primary" size="large">Editar</v-btn>
         </v-form>
         <v-alert
           class="my-5"
@@ -71,8 +71,21 @@ const formData = ref({
   categoriaId: "",
 });
 
+const { id } = useRoute().params;
+
 const categorias = ref([]);
 const successMessage = ref("");
+
+const fetchProduto = async () => {
+  try {
+    const response = await axios.get(
+      `https://localhost:7118/api/produtos/${id}`
+    );
+    formData.value = response.data;
+  } catch (error) {
+    console.error("Erro ao procurar o  produto", error);
+  }
+};
 
 const handleSubmit = async () => {
   try {
@@ -80,7 +93,7 @@ const handleSubmit = async () => {
       `https://localhost:7118/api/produtos/${id}`,
       formData.value
     );
-    successMessage.value = "Produto criado com sucesso!";
+    successMessage.value = "Produto editado com sucesso!";
     formData.value = { nome: "", descricao: "" };
   } catch (error) {
     console.error("Erro durante a criação do produto", error);
@@ -98,6 +111,7 @@ const fetchCategorias = async () => {
     console.error("Error fetching categories:", error);
   }
 };
+onMounted(fetchProduto);
 onMounted(fetchCategorias);
 </script>
 

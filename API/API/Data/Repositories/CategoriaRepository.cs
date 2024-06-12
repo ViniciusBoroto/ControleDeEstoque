@@ -67,7 +67,7 @@ public class CategoriaRepository : ICategoriaRepository
         categoriaDB.Nome = categoria.Nome;
         categoriaDB.Descricao = categoria.Descricao;
 
-        _context.Entry(categoria).State =
+        _context.Entry(categoriaDB).State =
             Microsoft.EntityFrameworkCore.EntityState.Modified;
         await _context.SaveChangesAsync();
         return new CategoriaViewModel(categoriaDB);

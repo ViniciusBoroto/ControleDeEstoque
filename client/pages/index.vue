@@ -57,6 +57,7 @@
                   density="comfortable"
                   icon="mdi-pencil"
                   variant="elevated"
+                  @click="redirectToEdit(produto.id)"
                 ></v-btn>
                 <v-btn
                   density="comfortable"
@@ -162,6 +163,10 @@ const deleteProduto = async () => {
   } catch (error) {
     console.error("Error deleting product:", error);
   }
+};
+
+const redirectToEdit = async (produtoId) => {
+  await navigateTo({ path: `/editar/${produtoId}` });
 };
 
 onMounted(fetchCategorias);

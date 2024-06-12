@@ -81,17 +81,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import axios from "axios";
-import { useRouter } from "vue-router";
 
 const categorias = ref([]);
 const deleteDialog = ref(false);
 const categoriaIdToDelete = ref(null);
-const router = useRouter();
 const loading = ref(true);
-
-const redirectToEdit = (cId) => {
-  router.push({ name: "EditarCategoria", params: { id: cId } });
-};
 
 const fetchCategorias = async () => {
   try {
@@ -123,6 +117,10 @@ const deleteCategoria = async () => {
   } catch (error) {
     console.error("Error deleting product:", error);
   }
+};
+
+const redirectToEdit = async (categoriaId) => {
+  await navigateTo({ path: `/categorias/editar/${categoriaId}` });
 };
 
 onMounted(fetchCategorias);
