@@ -26,7 +26,7 @@
           size="large"
           color="green"
           variant="flat"
-          @click="() => (creationForm = true)"
+          @click="redirectToCreate(categoria.id)"
           block
           >Adicionar produto</v-btn
         >
@@ -114,7 +114,6 @@ const categorias = ref([]);
 const produtos = ref([]);
 const categoriaSelecionada = ref(null);
 const deleteDialog = ref(false);
-const creationForm = ref(false);
 const produtoIdToDelete = ref(null);
 const loading = ref(true);
 
@@ -167,6 +166,10 @@ const deleteProduto = async () => {
 
 const redirectToEdit = async (produtoId) => {
   await navigateTo({ path: `/editar/${produtoId}` });
+};
+
+const redirectToCreate = async (categoriaId) => {
+  await navigateTo({ path: `/criar?categoria=${categoriaId}` });
 };
 
 onMounted(fetchCategorias);

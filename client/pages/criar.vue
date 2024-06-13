@@ -73,6 +73,9 @@ const formData = ref({
 
 const categorias = ref([]);
 const successMessage = ref("");
+const categoria = ref(null);
+
+console.log(categoria);
 
 const handleSubmit = async () => {
   try {

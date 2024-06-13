@@ -71,7 +71,8 @@ const formData = ref({
   categoriaId: "",
 });
 
-const { id } = useRoute().params;
+const id = useRoute().params.id;
+formData.value.categoriaId = categoria;
 
 const categorias = ref([]);
 const successMessage = ref("");
@@ -111,6 +112,7 @@ const fetchCategorias = async () => {
     console.error("Error fetching categories:", error);
   }
 };
+
 onMounted(fetchProduto);
 onMounted(fetchCategorias);
 </script>
